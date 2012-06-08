@@ -1,1 +1,7 @@
 <h2>Timesheet for <%= @user.firstname+' '+@user.lastname%></h2>
+
+<%= link_to "<<", :controller => "hours", :action => "prev_week", :week =>@week_start %>
+
+<%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %>
+
+<%= link_to ">>", :controller => "hours", :action => "next_week", :week =>@week_start %>
