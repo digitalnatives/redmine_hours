@@ -2,9 +2,13 @@ require 'redmine'
 
 Redmine::Plugin.register :redmine_hours do
   name 'Redmine Hours plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  description 'Harvest like work hour management'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+
+	project_module :hours do
+  	permission :view_hours, :work_time => :index
+	end
+
+	menu(:top_menu, :hours, {:controller => "hours", :action => 'index'}, :caption => 'Hours', :after => :my_page, :if => Proc.new{ User.current.logged? })
+
 end
