@@ -1,7 +1,37 @@
 <h2>Timesheet for <%= @user.firstname+' '+@user.lastname%></h2>
 
-<%= link_to "<<", :controller => "hours", :action => "prev_week", :week =>@week_start %>
-
-<%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %>
-
-<%= link_to ">>", :controller => "hours", :action => "next_week", :week =>@week_start %>
+<table>
+	<tr>
+		<th>
+			<%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %>
+		</th>
+		<th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+		<th>
+			<%= link_to "<<", :controller => "hours", :action => "prev_week", :week =>@week_start %>
+			<%= link_to "day", :controller => "hours", :action => "index" %>
+			<%= link_to "week", :controller => "hours", :action => "index" %>
+			<%= link_to ">>", :controller => "hours", :action => "next_week", :week =>@week_start %>
+		</th>
+	</tr>
+	<tr>
+		<th></th>
+		<% (@week_start..@week_end).each do |d| %>
+   	 <th><%= d.to_s(:day) %></th>
+		<% end %>
+		<th> Total </th>
+	</tr>
+	<% (1..10).each do %>
+	<tr>
+		<td> project // issue </td>
+		<% (1..7).each do %>
+   		<td><%= text_field_tag nil, '', :size => 2 %></td>
+		<% end %>
+		<td></td>
+	</tr>
+	<% end%>
+	<tr>
+		<td><%= link_to "add row", :controller => "hours", :action => "index" %>    total</td>
+		<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+		<td>0</td>
+	</tr>
+</table>
