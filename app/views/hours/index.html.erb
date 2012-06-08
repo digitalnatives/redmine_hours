@@ -3,17 +3,46 @@
 <table>
 	<tr>
 		<th>
-			<%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %>
+			<% if @current_day %>
+				<%= @current_day.to_s(:day_full) %>
+			<% else %>
+				<%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %>
+			<% end %>
 		</th>
 		<th></th><th></th><th></th><th></th><th></th><th></th><th></th>
 		<th>
-			<%= link_to "<<", :controller => "hours", :action => "prev_week", :week =>@week_start %>
-			<%= link_to "day", :controller => "hours", :action => "index" %>
-			<%= link_to "week", :controller => "hours", :action => "index" %>
-			<%= link_to ">>", :controller => "hours", :action => "next_week", :week =>@week_start %>
+			<% if @current_day %>
+				<%= link_to "<<", :controller => "hours", :action => "prev", :day =>@current_day.to_s(:param_date) %>
+			<% else %>
+				<%= link_to "<<", :controller => "hours", :action => "prev", :week =>@week_start.to_s(:param_date) %>
+			<% end %>
+
+			<%= link_to "current day", :controller => "hours", :action => "index", :day => DateTime.now.to_s(:param_date) %>
+			/
+			<%= link_to "current week", :controller => "hours", :action => "index", :week => DateTime.now.beginning_of_week.to_s(:param_date) %>
+
+			<% if @current_day %>
+				<%= link_to ">>", :controller => "hours", :action => "next", :day =>@current_day.to_s(:param_date) %>
+			<% else %>
+				<%= link_to ">>", :controller => "hours", :action => "next", :week =>@week_start.to_s(:param_date) %>
+			<% end %>
 		</th>
 	</tr>
-	<tr>
+	<% if @current_day %>
+		<% (1..4).each do %>
+			<tr>
+				<td>project // issue ||</td>
+				<td>developement//design ||</td>
+				<td>hours (start/stop) ||</td>
+				<td>comment?</td>
+			</tr>
+		<% end %>
+		<tr>
+			<td><%= link_to "add row", :controller => "hours", :action => "index" %></td>
+			<td></td><td></td><td></td>
+	</tr>
+	<% else %>
+		<tr>
 		<th></th>
 		<% (@week_start..@week_end).each do |d| %>
    	 <th><%= d.to_s(:day) %></th>
@@ -26,12 +55,18 @@
 		<% (1..7).each do %>
    		<td><%= text_field_tag nil, '', :size => 2 %></td>
 		<% end %>
-		<td></td>
+		<td>0</td>
 	</tr>
 	<% end%>
 	<tr>
-		<td><%= link_to "add row", :controller => "hours", :action => "index" %>    total</td>
+		<td>total</td>
 		<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
 		<td>0</td>
 	</tr>
+	<tr>
+		<td><%= link_to "add row", :controller => "hours", :action => "index" %></td>
+		<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td><%= link_to "save", :controller => "hours", :action => "index" %></td>
+	</tr>
+	<% end %>
 </table>

@@ -7,20 +7,28 @@ class HoursController < ApplicationController
   def index
   end
 
-  def next_week
-    redirect_to :action => 'index', :week => @week_start + 7
+  def next
+    if @current_day
+      redirect_to :action => 'index', :day => (@current_day + 1).to_s(:param_date)
+    else
+      redirect_to :action => 'index', :week => (@week_start + 7).to_s(:param_date)
+    end
   end
 
-  def prev_week
-    redirect_to :action => 'index', :week => @week_start - 7
+  def prev
+    if @current_day
+      redirect_to :action => 'index', :day => (@current_day - 1).to_s(:param_date)
+    else
+      redirect_to :action => 'index', :week => (@week_start - 7).to_s(:param_date)
+    end
   end
 
   private
 
   def get_dates
-    @current_day = DateTime.now
-    @week_start = params[:week].nil? ? DateTime.now.beginning_of_week : DateTime.strptime(params[:week], '%Y-%m-%dT%H:%M:%S%z').beginning_of_week
-    @week_end = params[:week].nil? ? DateTime.now.end_of_week : DateTime.strptime(params[:week], '%Y-%m-%dT%H:%M:%S%z').end_of_week
+    @current_day = DateTime.strptime(params[:day], Time::DATE_FORMATS[:param_date]) rescue nil
+    @week_start = params[:week].nil? ? DateTime.now.beginning_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).beginning_of_week
+    @week_end = params[:week].nil? ? DateTime.now.end_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).end_of_week
   end
 
   def get_user

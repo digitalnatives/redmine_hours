@@ -1,7 +1,9 @@
 require 'redmine'
 
 Time::DATE_FORMATS[:week] = "%Y %b %e"
+Time::DATE_FORMATS[:param_date] = "%Y-%m-%d"
 Time::DATE_FORMATS[:day] = "%a %e"
+Time::DATE_FORMATS[:day_full] = "%Y %b %e, %A"
 
 Redmine::Plugin.register :redmine_hours do
   name 'Redmine Hours plugin'
