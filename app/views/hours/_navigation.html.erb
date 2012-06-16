@@ -1,0 +1,11 @@
+<%= link_to "<<", :controller => "hours", :action => "prev", :week =>@week_start.to_s(:param_date) %>
+
+<%= link_to "current day", :controller => "hours", :action => "index",
+						:day => DateTime.now.to_s(:param_date) %>
+	/
+<%= link_to "current week", :controller => "hours", :action => "index",
+						:week => DateTime.now.beginning_of_week.to_s(:param_date) %>
+
+<%= link_to ">>", :controller => "hours", :action => "next", :week =>@week_start.to_s(:param_date) %>
+
+<br />

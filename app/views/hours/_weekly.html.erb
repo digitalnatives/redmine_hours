@@ -1,0 +1,31 @@
+<strong> <%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %> </strong>
+<br />
+
+<table>
+	<tr>
+		<th></th>
+		<% (@week_start..@week_end).each do |d| %>
+   	 <th><%= d.to_s(:day) %></th>
+		<% end %>
+		<th> Total </th>
+	</tr>
+	<% (1..10).each do %>
+	<tr>
+		<td> project // issue </td>
+		<% (1..7).each do %>
+   		<td><%= text_field_tag nil, '', :size => 2 %></td>
+		<% end %>
+		<td>0</td>
+	</tr>
+	<% end%>
+	<tr>
+		<td>total</td>
+		<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+		<td>0</td>
+	</tr>
+	<tr>
+		<td><%= link_to "add row", :controller => "hours", :action => "index" %></td>
+		<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td><%= link_to "save", :controller => "hours", :action => "index" %></td>
+	</tr>
+</table>
