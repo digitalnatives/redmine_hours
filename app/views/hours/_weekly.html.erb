@@ -24,11 +24,18 @@
 	</table>
 
 <p>
-<%= link_to "add row", :controller => "hours", :action => "index" %>
-</p>
-
-<p>
 	<%= submit_tag 'save' %>
 </p>
+
+<% end %>
+
+
+<% form_tag({:controller => 'timelog', :action => 'new'}, :method => :get) do %>
+
+<p>
+	<%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :issues, :name, :id, :subject) %>
+	<%= submit_tag 'New time entry' %>
+</p>
+
 
 <% end %>

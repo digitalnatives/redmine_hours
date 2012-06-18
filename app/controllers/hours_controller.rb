@@ -36,7 +36,10 @@ class HoursController < ApplicationController
         end
       end
     end
-    redirect_to :action => 'index', :week => @week_start.to_s(:param_date)
+    redirect_to :back
+  end
+
+  def add
   end
 
   private
@@ -48,6 +51,8 @@ class HoursController < ApplicationController
   end
 
   def get_issues
+    @loggable_projects = Project.all.select{ |pr| @user.allowed_to?(:log_time, pr)}
+
     weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
     @week_issue_matrix = {}
     weekly_time_entries.each do |te|
