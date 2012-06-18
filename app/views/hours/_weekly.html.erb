@@ -15,7 +15,8 @@
 				<td> <%= title %>
 				<% (@week_start..@week_end).each do |d| %>
    				<td><%= text_field_tag "hours[#{d.to_s(:param_date)}][#{info_hash[:issue_id]}][#{info_hash[:activity_id]}]",
-   															 info_hash[d.to_s(:param_date)] ? info_hash[d.to_s(:param_date)] : '',
+   															 info_hash[d.to_s(:param_date)].nil? || info_hash[d.to_s(:param_date)] == 0.0 ?
+   															 '' : info_hash[d.to_s(:param_date)],
    															 :size => 1 %></td>
 				<% end %>
 			</tr>

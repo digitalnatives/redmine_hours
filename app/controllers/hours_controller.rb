@@ -28,7 +28,7 @@ class HoursController < ApplicationController
     params['hours'].each do |day, issue_hash|
       issue_hash.each do |issue_id, activity_hash|
         activity_hash.each do |activity_id, hours|
-          te = TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user,
+          te = TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
                                                                                         issue_id.to_i,
                                                                                         activity_id.to_i,
                                                                                         day)
@@ -48,7 +48,7 @@ class HoursController < ApplicationController
   end
 
   def get_issues
-    weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end).sort_by{|te| te.issue.project.name}
+    weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
     @week_issue_matrix = {}
     weekly_time_entries.each do |te|
       @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id, :activity_id => te.activity_id}
