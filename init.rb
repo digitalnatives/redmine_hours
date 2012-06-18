@@ -4,6 +4,14 @@ Time::DATE_FORMATS[:week] = "%Y %b %e"
 Time::DATE_FORMATS[:param_date] = "%Y-%m-%d"
 Time::DATE_FORMATS[:day] = "%a %e"
 Time::DATE_FORMATS[:day_full] = "%Y %b %e, %A"
+Time::DATE_FORMATS[:database] = "%a, %d %b %Y"
+
+Rails.configuration.to_prepare do
+  TimeEntry.class_eval do
+    named_scope :for_user, lambda { |user| {:conditions => "#{TimeEntry.table_name}.user_id = #{user.id}"}}
+  end
+end
+
 
 Redmine::Plugin.register :redmine_hours do
   name 'Redmine Hours plugin'

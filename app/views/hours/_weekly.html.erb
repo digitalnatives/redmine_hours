@@ -1,31 +1,33 @@
 <strong> <%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %> </strong>
 <br />
 
-<table>
-	<tr>
-		<th></th>
-		<% (@week_start..@week_end).each do |d| %>
-   	 <th><%= d.to_s(:day) %></th>
+<% form_tag :controller => 'hours', :action => 'save_weekly', :week =>@week_start.to_s(:param_date) do %>
+
+	<table>
+		<tr>
+			<th></th>
+			<% (@week_start..@week_end).each do |d| %>
+   		 <th><%= d.to_s(:day) %></th>
+			<% end %>
+		</tr>
+		<% @week_issue_matrix.each do |title, info_hash| %>
+			<tr>
+				<td> <%= title %>
+				<% (@week_start..@week_end).each do |d| %>
+   				<td><%= text_field_tag "hours[#{d.to_s(:param_date)}][#{info_hash[:issue_id]}][#{info_hash[:activity_id]}]",
+   															 info_hash[d.to_s(:param_date)] ? info_hash[d.to_s(:param_date)] : '',
+   															 :size => 1 %></td>
+				<% end %>
+			</tr>
 		<% end %>
-		<th> Total </th>
-	</tr>
-	<% (1..10).each do %>
-	<tr>
-		<td> project // issue </td>
-		<% (1..7).each do %>
-   		<td><%= text_field_tag nil, '', :size => 2 %></td>
-		<% end %>
-		<td>0</td>
-	</tr>
-	<% end%>
-	<tr>
-		<td>total</td>
-		<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
-		<td>0</td>
-	</tr>
-	<tr>
-		<td><%= link_to "add row", :controller => "hours", :action => "index" %></td>
-		<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-		<td><%= link_to "save", :controller => "hours", :action => "index" %></td>
-	</tr>
-</table>
+	</table>
+
+<p>
+<%= link_to "add row", :controller => "hours", :action => "index" %>
+</p>
+
+<p>
+	<%= submit_tag 'save' %>
+</p>
+
+<% end %>
