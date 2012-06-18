@@ -1,22 +1,4 @@
 <strong> <%= @current_day.to_s(:day_full) %> </strong>
 <br />
 
-
-<table>
-	<% @daily_issues.each do |issue| %>
-			<tr>
-				<td><%= issue.project.name %> - <%= issue.subject %> </td>
-				<td>developement/design/etc ||</td>
-				<td>hours (start/stop) ||</td>
-			</tr>
-	<% end %>
-	<tr>
-		<td>total</td>
-		<td>0</td><td>0</td><td>0</td>
-	</tr>
-	<tr>
-		<td><%= link_to "add row", :controller => "hours", :action => "index" %></td>
-		<td></td><td></td>
-		<td><%= link_to "save", :controller => "hours", :action => "index" %></td>
-	</tr>
-</table>
+Coming soon!
