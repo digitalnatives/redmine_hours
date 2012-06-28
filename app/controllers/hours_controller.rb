@@ -60,7 +60,14 @@ class HoursController < ApplicationController
     weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
     @week_issue_matrix = {}
     weekly_time_entries.each do |te|
-      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id, :activity_id => te.activity_id}
+      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id,
+                                                                                                      :activity_id => te.activity_id,
+                                                                                                      :project_id => te.issue.project.id,
+                                                                                                      :project_name => te.issue.project.name,
+                                                                                                      :issue_text => te.issue.to_s,
+                                                                                                      :activity_name => te.activity.name
+                                                                                                     }
+      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
       @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][te.spent_on.to_s(:param_date)] = te.hours
     end
 

@@ -13,7 +13,10 @@
 		</tr>
 		<% @week_issue_matrix.each do |title, info_hash| %>
 			<tr>
-				<td> <%= title %>
+				<td> <%= link_to info_hash[:project_name], project_path(info_hash[:project_id]) %> -
+					 <%= link_to info_hash[:issue_text], issue_time_entries_path(info_hash[:issue_id]), :class => info_hash[:issue_class]  %>
+					 (<%= info_hash[:activity_name]%>)
+				</td>
 				<% (@week_start..@week_end).each do |d| %>
    				<td><%= text_field_tag "hours[#{d.to_s(:param_date)}][#{info_hash[:issue_id]}][#{info_hash[:activity_id]}]",
    															 info_hash[d.to_s(:param_date)].nil? || info_hash[d.to_s(:param_date)] == 0.0 ?
