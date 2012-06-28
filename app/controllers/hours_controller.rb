@@ -28,7 +28,7 @@ class HoursController < ApplicationController
     params['hours'].each do |day, issue_hash|
       issue_hash.each do |issue_id, activity_hash|
         activity_hash.each do |activity_id, hours|
-          te = TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
+          TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
                                                                                         issue_id.to_i,
                                                                                         activity_id.to_i,
                                                                                         day)
@@ -36,6 +36,11 @@ class HoursController < ApplicationController
         end
       end
     end
+    redirect_to :back
+  end
+
+  def save_daily
+    params['hours'].each { |te_id, hash| TimeEntry.find(te_id.to_i).update_attributes(:hours => hash['spent'].to_f, :comments => hash['comments']) }
     redirect_to :back
   end
 
@@ -68,9 +73,10 @@ class HoursController < ApplicationController
                                                                                                       :activity_name => te.activity.name
                                                                                                      }
       @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
-      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][te.spent_on.to_s(:param_date)] = te.hours
+      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
     end
 
+    @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
 
   end
 

@@ -3,5 +3,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/hours/n', :controller => 'hours', :action => 'next'
   map.connect '/hours/p', :controller => 'hours', :action => 'prev'
   map.connect '/hours/sw', :controller => 'hours', :action => 'save_weekly'
+  map.connect '/hours/sd', :controller => 'hours', :action => 'save_daily'
   map.connect '/hours/del', :controller => 'hours', :action => 'delete_row'
 end

@@ -8,7 +8,6 @@
 			<th></th>
 			<% (@week_start..@week_end).each do |d| %>
    		 <th><%= d.to_s(:day) %></th>
-   		 
 			<% end %>
 		</tr>
 		<% @week_issue_matrix.each do |title, info_hash| %>
@@ -19,8 +18,8 @@
 				</td>
 				<% (@week_start..@week_end).each do |d| %>
    				<td><%= text_field_tag "hours[#{d.to_s(:param_date)}][#{info_hash[:issue_id]}][#{info_hash[:activity_id]}]",
-   															 info_hash[d.to_s(:param_date)].nil? || info_hash[d.to_s(:param_date)] == 0.0 ?
-   															 '' : info_hash[d.to_s(:param_date)],
+   															 info_hash[d.to_s(:param_date)].nil? || info_hash[d.to_s(:param_date)][:hours] == 0.0 ?
+   															 '' : info_hash[d.to_s(:param_date)][:hours],
    															 :size => 1 %></td>
 				<% end %>
 				<td><%= link_to image_tag('delete.png'), {:controller => 'hours',
@@ -42,13 +41,3 @@
 
 <% end %>
 
-
-<% form_tag({:controller => 'timelog', :action => 'new'}, :method => :get) do %>
-
-<p>
-	<%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :issues, :name, :id, :subject) %>
-	<%= submit_tag 'New time entry' %>
-</p>
-
-
-<% end %>
