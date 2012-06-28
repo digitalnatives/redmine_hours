@@ -39,7 +39,11 @@ class HoursController < ApplicationController
     redirect_to :back
   end
 
-  def add
+  def delete_row
+    TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
+    .find(:all, :conditions => ["issue_id = \"#{params[:issue_id]}\" AND activity_id = \"#{params[:activity_id]}\" "])
+    .each(&:delete)
+    redirect_to :back
   end
 
   private

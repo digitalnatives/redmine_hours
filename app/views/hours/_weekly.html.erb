@@ -8,6 +8,7 @@
 			<th></th>
 			<% (@week_start..@week_end).each do |d| %>
    		 <th><%= d.to_s(:day) %></th>
+   		 
 			<% end %>
 		</tr>
 		<% @week_issue_matrix.each do |title, info_hash| %>
@@ -19,6 +20,15 @@
    															 '' : info_hash[d.to_s(:param_date)],
    															 :size => 1 %></td>
 				<% end %>
+				<td><%= link_to image_tag('delete.png'), {:controller => 'hours',
+														  :action => 'delete_row',
+														  :issue_id => info_hash[:issue_id],
+														  :activity_id => info_hash[:activity_id],
+														  :week =>@week_start.to_s(:param_date)
+														 },
+                                             			  :confirm => l(:text_are_you_sure),
+                                             			  :method => :delete,
+                                             			  :title => l(:button_delete) %></td>
 			</tr>
 		<% end %>
 	</table>
