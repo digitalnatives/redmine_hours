@@ -6,9 +6,9 @@
 
 <table>
 	<tr>
-		<th>Issue</th>
-		<th>Hours</th>
-		<th>Comment</th>
+		<th><%= l(:field_issue) %></th>
+		<th><%= l(:field_hours) %></th>
+		<th><%= l(:field_comments) %></th>
 	</tr>
 	<% @daily_issues.each do |title, info_hash| %>
 	<tr>
@@ -51,7 +51,7 @@
 </table>
 
 <p>
-	<%= submit_tag 'save' %>
+	<%= submit_tag l(:button_save) %>
 </p>
 
 <% end %>

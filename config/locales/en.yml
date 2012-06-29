@@ -1,3 +1,10 @@
 # English strings go here for Rails i18n
 en:
-  my_label: "My label"
+  redmine_hours:
+    current_day: Current day
+    current_week: Current week
+    new_time_entry: New time entry
+    next_week: Next week
+    next_day: Next day
+    prev_week: Previous week
+    prev_day: Previous day

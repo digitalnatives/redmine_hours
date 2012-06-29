@@ -1,18 +1,22 @@
 <% if @current_day %>
-	<%= link_to "<<", :controller => "hours", :action => "prev", :day =>@current_day.to_s(:param_date)%>
+	<%= link_to "<<", {:controller => "hours", :action => "prev", :day =>@current_day.to_s(:param_date)},
+						:title => l('redmine_hours.prev_day')%>
 <% else %>
-	<%= link_to "<<", :controller => "hours", :action => "prev", :week =>@week_start.to_s(:param_date) %>
+	<%= link_to "<<", {:controller => "hours", :action => "prev", :week =>@week_start.to_s(:param_date)},
+						:title => l('redmine_hours.prev_week') %>
 <% end %>
 
-<%= link_to "current day", :controller => "hours", :action => "index",
+<%= link_to l('redmine_hours.current_day'), :controller => "hours", :action => "index",
 						:day => DateTime.now.to_s(:param_date) %>
 	/
-<%= link_to "current week", :controller => "hours", :action => "index",
+<%= link_to l('redmine_hours.current_week'), :controller => "hours", :action => "index",
 						:week => DateTime.now.beginning_of_week.to_s(:param_date) %>
 
 <% if @current_day %>
-	<%= link_to ">>", :controller => "hours", :action => "next", :day =>@current_day.to_s(:param_date)%>
+	<%= link_to ">>", {:controller => "hours", :action => "next", :day =>@current_day.to_s(:param_date)},
+						:title => l('redmine_hours.next_day') %>
 <% else %>
-	<%= link_to ">>", :controller => "hours", :action => "next", :week =>@week_start.to_s(:param_date) %>
+	<%= link_to ">>", {:controller => "hours", :action => "next", :week =>@week_start.to_s(:param_date)},
+						:title => l('redmine_hours.next_week') %>
 <% end %>
 <br />
