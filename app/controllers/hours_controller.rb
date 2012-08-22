@@ -31,8 +31,7 @@ class HoursController < ApplicationController
           TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
                                                                                         issue_id.to_i,
                                                                                         activity_id.to_i,
-                                                                                        day)
-          .update_attributes(:hours => hours.to_f) unless hours.blank?
+                                                                                        day).update_attributes(:hours => hours.to_f) unless hours.blank?
         end
       end
     end
@@ -45,9 +44,7 @@ class HoursController < ApplicationController
   end
 
   def delete_row
-    TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
-    .find(:all, :conditions => ["issue_id = \"#{params[:issue_id]}\" AND activity_id = \"#{params[:activity_id]}\" "])
-    .each(&:delete)
+    TimeEntry.for_user(@user).spent_between(@week_start, @week_end).find(:all, :conditions => ["issue_id = \"#{params[:issue_id]}\" AND activity_id = \"#{params[:activity_id]}\" "]).each(&:delete)
     redirect_to :back
   end
 
