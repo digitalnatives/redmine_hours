@@ -52,8 +52,13 @@ class HoursController < ApplicationController
 
   def get_dates
     @current_day = DateTime.strptime(params[:day], Time::DATE_FORMATS[:param_date]) rescue nil
-    @week_start = params[:week].nil? ? DateTime.now.beginning_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).beginning_of_week
-    @week_end = params[:week].nil? ? DateTime.now.end_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).end_of_week
+    if @current_day
+      @week_start = @current_day.beginning_of_week
+      @week_end = @current_day.end_of_week
+    else
+      @week_start = params[:week].nil? ? DateTime.now.beginning_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).beginning_of_week
+      @week_end = params[:week].nil? ? DateTime.now.end_of_week : DateTime.strptime(params[:week], Time::DATE_FORMATS[:param_date]).end_of_week
+    end
   end
 
   def get_issues
@@ -82,6 +87,9 @@ class HoursController < ApplicationController
     end
 
     @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
+    logger.debug "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    logger.debug @week_issue_matrix.inspect
+    logger.debug "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
     if @week_issue_matrix.empty?
       last_week_time_entries = TimeEntry.for_user(@user).spent_between(@week_start-7, @week_end-7).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
