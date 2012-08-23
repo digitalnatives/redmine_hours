@@ -75,6 +75,11 @@ class HoursController < ApplicationController
     end
 
     @week_issue_matrix = @week_issue_matrix.sort
+    @daily_totals = {}
+
+    (@week_start..@week_end).each do |day|
+      @daily_totals[day.to_s(:param_date)] = TimeEntry.for_user(@user).spent_on(day).map(&:hours).inject(:+)
+    end
 
     @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
 

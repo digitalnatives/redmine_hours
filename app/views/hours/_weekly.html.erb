@@ -33,6 +33,12 @@
                                              			  :title => l(:button_delete) %></td>
 			</tr>
 		<% end %>
+    <tr>
+      <td><hr /><strong>Total:</strong></td>
+      <% (@week_start..@week_end).each do |day| %>
+       <td><hr /><%= @daily_totals[day.to_s(:param_date)] ? @daily_totals[day.to_s(:param_date)] : 0.0  %></td>
+      <% end %>
+    </tr>
 	</table>
 
 <p>
