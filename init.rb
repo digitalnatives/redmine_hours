@@ -15,9 +15,9 @@ end
 
 
 Redmine::Plugin.register :redmine_hours do
-  name 'Redmine Hours plugin'
-  description 'Harvest like work hour management'
-  version '0.0.1'
+  name 'Redmine Hours Plugin'
+  description 'Redmine Hours is a plugin to fill out your weekly timelog / timesheet easier.'
+  version '0.1.0'
 
 	project_module :hours do
   	permission :view_hours, :work_time => :index
