@@ -59,7 +59,7 @@ class HoursController < ApplicationController
   def get_issues
     @loggable_projects = Project.all.select{ |pr| @user.allowed_to?(:log_time, pr)}
 
-    weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
+    weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
 
     @week_issue_matrix = {}
     weekly_time_entries.each do |te|
@@ -74,8 +74,9 @@ class HoursController < ApplicationController
       @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
     end
 
-    @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
+    @week_issue_matrix = @week_issue_matrix.sort
 
+    @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
 
     if @week_issue_matrix.empty?
       last_week_time_entries = TimeEntry.for_user(@user).spent_between(@week_start-7, @week_end-7).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
