@@ -92,6 +92,7 @@ class HoursController < ApplicationController
     logger.debug "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
     if @week_issue_matrix.empty?
+      @week_issue_matrix = {}
       last_week_time_entries = TimeEntry.for_user(@user).spent_between(@week_start-7, @week_end-7).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
       last_week_time_entries.each do |te|
         @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id,
@@ -103,6 +104,7 @@ class HoursController < ApplicationController
                                                                                                      }
         @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
       end
+      @week_issue_matrix = @week_issue_matrix.sort
     end
 
   end
