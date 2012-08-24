@@ -14,7 +14,7 @@
 	<tr>
 		<td>
 			<%= link_to info_hash[:project_name], project_path(info_hash[:project_id]) %> -
-			<%= link_to info_hash[:issue_text], issue_time_entries_path(info_hash[:issue_id]), :class => info_hash[:issue_class]  %>
+			<%= link_to info_hash[:issue_text], issue_time_entries_path(info_hash[:issue_id]), :class => info_hash[:issue_class]  if info_hash[:issue_id] %>
 			(<%= info_hash[:activity_name]%>)
 		</td>
 		<td>

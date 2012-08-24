@@ -28,10 +28,18 @@ class HoursController < ApplicationController
     params['hours'].each do |day, issue_hash|
       issue_hash.each do |issue_id, activity_hash|
         activity_hash.each do |activity_id, hours|
-          TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
+          if issue_id =~ /no_issue/
+            TimeEntry.find_or_create_by_user_id_and_project_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
+                                                                                        issue_id.split(":").last.to_i,
+                                                                                        nil,
+                                                                                        activity_id.to_i,
+                                                                                        day).update_attributes(:hours => hours.to_f) unless hours.blank?
+          else
+            TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
                                                                                         issue_id.to_i,
                                                                                         activity_id.to_i,
                                                                                         day).update_attributes(:hours => hours.to_f) unless hours.blank?
+          end
         end
       end
     end
@@ -45,6 +53,7 @@ class HoursController < ApplicationController
 
   def delete_row
     TimeEntry.for_user(@user).spent_between(@week_start, @week_end).find(:all, :conditions => ["issue_id = \"#{params[:issue_id]}\" AND activity_id = \"#{params[:activity_id]}\" "]).each(&:delete)
+    TimeEntry.for_user(@user).spent_between(@week_start, @week_end).find(:all, :conditions => ["project_id = \"#{params[:project_id]}\" AND issue_id IS NULL AND activity_id = \"#{params[:activity_id]}\" "]).each(&:delete)
     redirect_to :back
   end
 
@@ -68,15 +77,16 @@ class HoursController < ApplicationController
 
     @week_issue_matrix = {}
     weekly_time_entries.each do |te|
-      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id,
+      key = te.project.name + (te.issue ? " - #{te.issue.subject}" : "") +  " - #{te.activity.name}"
+      @week_issue_matrix[key] ||= {:issue_id => te.issue_id,
                                                                                                       :activity_id => te.activity_id,
-                                                                                                      :project_id => te.issue.project.id,
-                                                                                                      :project_name => te.issue.project.name,
-                                                                                                      :issue_text => te.issue.to_s,
+                                                                                                      :project_id => te.project.id,
+                                                                                                      :project_name => te.project.name,
+                                                                                                      :issue_text => te.issue.try(:to_s),
                                                                                                       :activity_name => te.activity.name
                                                                                                      }
-      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
-      @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
+      @week_issue_matrix[key][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue' if te.issue
+      @week_issue_matrix[key][te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
     end
 
     @week_issue_matrix = @week_issue_matrix.sort
@@ -87,9 +97,6 @@ class HoursController < ApplicationController
     end
 
     @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
-    logger.debug "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    logger.debug @week_issue_matrix.inspect
-    logger.debug "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
     if @week_issue_matrix.empty?
       @week_issue_matrix = {}
