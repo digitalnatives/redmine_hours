@@ -1,0 +1,10 @@
+# German strings go here for Rails i18n
+de:
+  redmine_hours:
+    current_day: Heute
+    current_week: Aktuelle Woche
+    new_time_entry: Neuer Eintrag
+    next_week: Nächste Woche
+    next_day: Morgen
+    prev_week: Vergangene Woche
+    prev_day: Gestern
