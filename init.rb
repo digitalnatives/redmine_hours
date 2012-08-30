@@ -11,6 +11,11 @@ Rails.configuration.to_prepare do
     named_scope :for_user, lambda { |user| {:conditions => "#{TimeEntry.table_name}.user_id = #{user.id}"}}
     named_scope :spent_on, lambda { |date| {:conditions => ["#{TimeEntry.table_name}.spent_on = ?", date]}}
   end
+  Project.class_eval do
+    def open_issues
+      self.issues.reject(&:closed?)
+    end
+  end
 end
 
 
