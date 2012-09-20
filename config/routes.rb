@@ -1,8 +1,8 @@
-ActionController::Routing::Routes.draw do |map|
-  map.connect '/hours', :controller => 'hours', :action => 'index'
-  map.connect '/hours/n', :controller => 'hours', :action => 'next'
-  map.connect '/hours/p', :controller => 'hours', :action => 'prev'
-  map.connect '/hours/sw', :controller => 'hours', :action => 'save_weekly'
-  map.connect '/hours/sd', :controller => 'hours', :action => 'save_daily'
-  map.connect '/hours/del', :controller => 'hours', :action => 'delete_row'
+RedmineApp::Application.routes.draw do
+  match '/hours', :to => 'hours#index'
+  match '/hours/n', :to => 'hours#next'
+  match '/hours/p', :to => 'hours#prev'
+  match '/hours/sw', :to => 'hours#save_weekly'
+  match '/hours/sd', :to => 'hours#save_daily'
+  match '/hours/del', :to => 'hours#delete_row'
 end

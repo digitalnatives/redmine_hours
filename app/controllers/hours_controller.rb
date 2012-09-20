@@ -114,6 +114,9 @@ class HoursController < ApplicationController
       @week_issue_matrix = @week_issue_matrix.sort
     end
 
+    logger.debug '+++++++++++++++++++++++++++++++++++'
+    logger.debug @week_issue_matrix.inspect
+    logger.debug '+++++++++++++++++++++++++++++++++++'
   end
 
   def get_user

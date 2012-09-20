@@ -10,10 +10,9 @@
 	<%= render :partial => "weekly" %>
 <% end %>
 
-<% form_tag({:controller => 'timelog', :action => 'new'}, :method => :get) do %>
+<%= form_tag({:controller => 'timelog', :action => 'new'}, :method => :get) do %>
 	<p>
 		<%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :open_issues, :name, :id, :subject) %>
 		<%= submit_tag l('redmine_hours.new_time_entry') %>
 	</p>
 <% end %>
-
