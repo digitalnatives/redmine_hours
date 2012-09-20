@@ -26,9 +26,7 @@ Redmine::Plugin.register :redmine_hours do
   version '0.1.0'
   url 'https://github.com/digitalnatives/redmine_hours'
 
-	project_module :hours do
-  	permission :view_hours, :work_time => :index
-	end
+  permission :view_hours, :work_time => :index
 
 	menu(:top_menu, :hours, {:controller => "hours", :action => 'index'}, :caption => 'Hours', :after => :my_page, :if => Proc.new{ User.current.logged? }, :param => :user_id)
 
