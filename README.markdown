@@ -30,7 +30,7 @@ If you're using Redmine 2.x, check out the [redmine2 branch](https://github.com/
 
 Follow the Redmine [plugin installation steps](http://www.redmine.org/wiki/redmine/Plugins).
 
-*   Make sure the plugin was copied to vendor/plugins/redmine_hours
+*   Make sure the plugin was copied to vendor/plugins/redmine_hours (git clone https://github.com/digitalnatives/redmine_hours.git)
 *   Restart your Redmine web servers (e.g. mongrel, thin, mod_rails)
 *   Click the "Hours" link in the top (main) menu
 
