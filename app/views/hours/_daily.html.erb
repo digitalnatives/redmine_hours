@@ -2,7 +2,7 @@
 <br />
 <br />
 
-<% form_tag :controller => 'hours', :action => 'save_daily', :day =>@current_day.to_s(:param_date) do %>
+<% form_content = lambda do %>
 
 <table>
 	<tr>
@@ -61,4 +61,10 @@
 	<%= submit_tag l(:button_save) %>
 </p>
 
+<% end %>
+
+<% if Redmine::VERSION::MAJOR == 1 %>
+  <% form_tag :controller => 'hours', :action => 'save_daily', :day =>@current_day.to_s(:param_date), &form_content %>
+<% else %>
+  <%= form_tag :controller => 'hours', :action => 'save_daily', :day =>@current_day.to_s(:param_date), &form_content %>
 <% end %>

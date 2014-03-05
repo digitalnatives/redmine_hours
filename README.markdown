@@ -23,8 +23,7 @@ Get the latest source from [GitHub](https://github.com/digitalnatives/redmine_ho
 
 # Compatibility
 
-This version of the plugin is compatible with Redmine 1.4 .
-If you're using Redmine 2.x, check out the [redmine2 branch](https://github.com/digitalnatives/redmine_hours/tree/redmine2).
+This version of the plugin is compatible with Redmine 1.4 and 2.x.
 
 # Installation
 

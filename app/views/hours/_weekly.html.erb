@@ -1,7 +1,7 @@
 <strong> <%= @week_start.to_s(:week) %> - <%= @week_end.to_s(:week) %> </strong>
 <br />
 
-<% form_tag :controller => 'hours', :action => 'save_weekly', :week =>@week_start.to_s(:param_date) do %>
+<% form_content = lambda do %>
 
 	<table>
 		<tr>
@@ -50,3 +50,8 @@
 
 <% end %>
 
+<% if Redmine::VERSION::MAJOR == 1 %>
+  <% form_tag :controller => 'hours', :action => 'save_weekly', :week =>@week_start.to_s(:param_date), &form_content %>
+<% else %>
+  <%= form_tag :controller => 'hours', :action => 'save_weekly', :week =>@week_start.to_s(:param_date), &form_content %>
+<% end %>
