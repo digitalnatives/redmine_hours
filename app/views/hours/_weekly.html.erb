@@ -7,7 +7,8 @@
 		<tr>
 			<th></th>
 			<% (@week_start..@week_end).each do |d| %>
-   		 <th><%= d.to_s(:day) %></th>
+   		 <th><%= link_to d.to_s(:day), :controller => "hours", :action => "index",
+						:day => d.to_s(:param_date) %></th>
 			<% end %>
 		</tr>
 		<% @week_issue_matrix.each do |title, info_hash| %>
