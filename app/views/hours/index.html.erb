@@ -12,7 +12,7 @@
 
 <% form_content = lambda do %>
   <p>
-    <%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :open_issues, :name, :id, :subject) %>
+    <%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :open_issues, :name, :id, :subject), class: "chosen-select" %>
     <%= submit_tag l('redmine_hours.new_time_entry') %>
   </p>
 <% end %>

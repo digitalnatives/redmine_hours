@@ -7,6 +7,8 @@ Time::DATE_FORMATS[:day_full] = "%Y %b %e, %A"
 Time::DATE_FORMATS[:database] = "%a, %d %b %Y"
 
 Rails.configuration.to_prepare do
+  require_dependency 'hours_view_hook_listener'
+
   TimeEntry.class_eval do
     user_lambda = lambda { |user| where(user_id: user) }
     spent_on_lambda = lambda { |date| where(spent_on: date.to_date) }
