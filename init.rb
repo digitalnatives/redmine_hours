@@ -8,8 +8,8 @@ Time::DATE_FORMATS[:database] = "%a, %d %b %Y"
 
 Rails.configuration.to_prepare do
   TimeEntry.class_eval do
-    named_scope :for_user, lambda { |user| {:conditions => "#{TimeEntry.table_name}.user_id = #{user.id}"}}
-    named_scope :spent_on, lambda { |date| {:conditions => ["#{TimeEntry.table_name}.spent_on = ?", date]}}
+    named_scope :for_user, lambda { |user| where(user_id: user) }
+    named_scope :spent_on, lambda { |date| where(spent_on: date.to_date) }
   end
   Project.class_eval do
     def open_issues
