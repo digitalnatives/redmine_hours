@@ -28,17 +28,18 @@ class HoursController < ApplicationController
     params['hours'].each do |day, issue_hash|
       issue_hash.each do |issue_id, activity_hash|
         activity_hash.each do |activity_id, hours|
+          hours = hours_value(hours)
           if issue_id =~ /no_issue/
             TimeEntry.find_or_create_by_user_id_and_project_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                        issue_id.split(":").last.to_i,
+                                                                                        issue_id.split(":").last,
                                                                                         nil,
-                                                                                        activity_id.to_i,
-                                                                                        day).update_attributes(:hours => hours.to_f) unless hours.blank?
+                                                                                        activity_id,
+                                                                                        day).update_attributes(:hours => hours) unless hours.blank?
           else
             TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                        issue_id.to_i,
-                                                                                        activity_id.to_i,
-                                                                                        day).update_attributes(:hours => hours.to_f) unless hours.blank?
+                                                                                        issue_id,
+                                                                                        activity_id,
+                                                                                        day).update_attributes(:hours => hours) unless hours.blank?
           end
         end
       end
@@ -47,7 +48,7 @@ class HoursController < ApplicationController
   end
 
   def save_daily
-    params['hours'].each { |te_id, hash| TimeEntry.find(te_id.to_i).update_attributes(:hours => hash['spent'].to_f, :comments => hash['comments']) }
+    params['hours'].each { |te_id, hash| TimeEntry.find(te_id).update_attributes(:hours => hours_value(hash['spent']), :comments => hash['comments']) }
     redirect_to :back
   end
 
@@ -130,4 +131,9 @@ class HoursController < ApplicationController
     end
   end
 
+  private
+
+  def hours_value(hours)
+    hours.tr(",", ".").to_f
+  end
 end
