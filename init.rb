@@ -24,7 +24,7 @@ Rails.configuration.to_prepare do
 
   Project.class_eval do
     def open_issues
-      self.issues.reject(&:closed?)
+      issues.open.order(:subject)
     end
   end
 end
