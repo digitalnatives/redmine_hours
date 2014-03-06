@@ -8,9 +8,18 @@ Time::DATE_FORMATS[:database] = "%a, %d %b %Y"
 
 Rails.configuration.to_prepare do
   TimeEntry.class_eval do
-    named_scope :for_user, lambda { |user| {:conditions => "#{TimeEntry.table_name}.user_id = #{user.id}"}}
-    named_scope :spent_on, lambda { |date| {:conditions => ["#{TimeEntry.table_name}.spent_on = ?", date]}}
+    user_lambda = lambda { |user| where(user_id: user) }
+    spent_on_lambda = lambda { |date| where(spent_on: date.to_date) }
+
+    if Redmine::VERSION::MAJOR == 1
+      named_scope :for_user, user_lambda
+      named_scope :spent_on, spent_on_lambda
+    else
+      scope :for_user, user_lambda
+      scope :spent_on, spent_on_lambda
+    end
   end
+
   Project.class_eval do
     def open_issues
       self.issues.reject(&:closed?)
