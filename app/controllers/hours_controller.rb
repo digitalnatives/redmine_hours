@@ -29,17 +29,19 @@ class HoursController < ApplicationController
       issue_hash.each do |issue_id, activity_hash|
         activity_hash.each do |activity_id, hours|
           hours = hours_value(hours)
-          if issue_id =~ /no_issue/
-            TimeEntry.find_or_create_by_user_id_and_project_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                        issue_id.split(":").last,
-                                                                                        nil,
-                                                                                        activity_id,
-                                                                                        day).update_attributes(:hours => hours) unless hours.blank?
-          else
-            TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                        issue_id,
-                                                                                        activity_id,
-                                                                                        day).update_attributes(:hours => hours) unless hours.blank?
+          if hours > 0
+            if issue_id =~ /no_issue/
+              TimeEntry.find_or_create_by_user_id_and_project_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
+                                                                                          issue_id.split(":").last,
+                                                                                          nil,
+                                                                                          activity_id,
+                                                                                          day).update_attributes(:hours => hours) unless hours.blank?
+            else
+              TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
+                                                                                          issue_id,
+                                                                                          activity_id,
+                                                                                          day).update_attributes(:hours => hours) unless hours.blank?
+            end
           end
         end
       end
