@@ -23,26 +23,11 @@
   <%= form_tag({:controller => 'timelog', :action => 'new'}, :method => :get, &form_content) %>
 <% end %>
 
-<div>
-  <% issue_collections = {l(:label_assigned_to_me_issues) => @issues_assigned_to_me,
-                          l("redmine_hours.my_most_used")=> @my_most_used_issues } %>
-
-  <% issue_collections.each do |title, issues| %>
-    <div>
-      <h3> <%= title %> </h3>
-      <table class="rh-issue-table">
-        <% issues.each do |issue| %>
-          <% project = issue.project %>
-          <tr>
-            <td>
-              <%= link_to project.name, project_path(project) %> - <%= link_to issue.subject, issue_path(issue) %>
-            </td>
-            <td>
-              <%= link_to l('redmine_hours.new_time_entry'), new_issue_time_entry_path(issue) %>
-            </td>
-          </tr>
-      <% end %>
-      </table>
-    </div>
-  <% end %>
-</div>
+<%= render_tabs [{:name => 'assigned_to_me',
+                  :partial => 'issues_tab',
+                  :label => :label_assigned_to_me_issues,
+                  :issues => @issues_assigned_to_me },
+                 {:name => 'my_most_used',
+                  :partial => 'issues_tab',
+                  :label => 'redmine_hours.my_most_used',
+                  :issues => @my_most_used_issues }] %>

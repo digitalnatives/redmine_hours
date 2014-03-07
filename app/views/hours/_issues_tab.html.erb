@@ -1,0 +1,13 @@
+<table class="rh-issue-table">
+  <% tab[:issues].each do |issue| %>
+    <% project = issue.project %>
+  <tr>
+    <td>
+      <%= link_to project.name, project_path(project) %> - <%= link_to issue.subject, issue_path(issue) %>
+    </td>
+    <td>
+      <%= link_to l('redmine_hours.new_time_entry'), new_issue_time_entry_path(issue) %>
+    </td>
+  </tr>
+<% end %>
+</table>
