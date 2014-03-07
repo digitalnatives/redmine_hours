@@ -27,21 +27,29 @@ class HoursController < ApplicationController
   def save_weekly
     params['hours'].each do |day, issue_hash|
       issue_hash.each do |issue_id, activity_hash|
-        activity_hash.each do |activity_id, hours|
-          hours = hours_value(hours)
-          if hours > 0
-            if issue_id =~ /no_issue/
-              TimeEntry.find_or_create_by_user_id_and_project_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                          issue_id.split(":").last,
-                                                                                          nil,
-                                                                                          activity_id,
-                                                                                          day).update_attributes(:hours => hours) unless hours.blank?
-            else
-              TimeEntry.find_or_create_by_user_id_and_issue_id_and_activity_id_and_spent_on(@user.id,
-                                                                                          issue_id,
-                                                                                          activity_id,
-                                                                                          day).update_attributes(:hours => hours) unless hours.blank?
-            end
+        activity_hash.each do |activity_id, other_hash|
+          other_hash.each do |id, hours|
+            id = id.to_i > 0 ? id : nil
+            attributes = if issue_id =~ /no_issue/
+                           {
+                             id: id,
+                             user_id: @user.id,
+                             project_id: issue_id.split(":").last,
+                             issue_id: nil,
+                             activity_id: activity_id,
+                             spent_on: day
+                           }
+                         else
+                           {
+                             id: id,
+                             user_id: @user.id,
+                             issue_id: issue_id,
+                             activity_id: activity_id,
+                             spent_on: day
+                           }
+                         end
+            hours_value = parse_hours(hours)
+            TimeEntry.where(attributes).first_or_create.update_attributes(:hours => hours_value) if hours_value > 0
           end
         end
       end
@@ -50,7 +58,7 @@ class HoursController < ApplicationController
   end
 
   def save_daily
-    params['hours'].each { |te_id, hash| TimeEntry.find(te_id).update_attributes(:hours => hours_value(hash['spent']), :comments => hash['comments']) }
+    params['hours'].each { |te_id, hash| TimeEntry.find(te_id).update_attributes(:hours => parse_hours(hash['spent']), :comments => hash['comments']) }
     redirect_to :back
   end
 
@@ -78,45 +86,47 @@ class HoursController < ApplicationController
 
     weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
 
-    @week_issue_matrix = {}
+    @week_issues = []
     weekly_time_entries.each do |te|
-      key = te.project.name + (te.issue ? " - #{te.issue.subject}" : "") +  " - #{te.activity.name}"
-      @week_issue_matrix[key] ||= {:issue_id => te.issue_id,
-                                                                                                      :activity_id => te.activity_id,
-                                                                                                      :project_id => te.project.id,
-                                                                                                      :project_name => te.project.name,
-                                                                                                      :issue_text => te.issue.try(:to_s),
-                                                                                                      :activity_name => te.activity.name
-                                                                                                     }
-      @week_issue_matrix[key][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue' if te.issue
-      @week_issue_matrix[key][te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
+      time_entry_hash = { :id => te.id,
+                          :issue_id => te.issue_id,
+                          :activity_id => te.activity_id,
+                          :project_id => te.project.id,
+                          :project_name => te.project.name,
+                          :issue_text => te.issue.try(:to_s),
+                          :spent_on => te.spent_on.to_s(:param_date),
+                          :activity_name => te.activity.name
+      }
+      time_entry_hash[:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue' if te.issue
+      time_entry_hash[te.spent_on.to_s(:param_date)] = {:hours => te.hours, :te_id => te.id, :comments => te.comments}
+      @week_issues << time_entry_hash
     end
 
-    @week_issue_matrix = @week_issue_matrix.sort
     @daily_totals = {}
 
     (@week_start..@week_end).each do |day|
       @daily_totals[day.to_s(:param_date)] = TimeEntry.for_user(@user).spent_on(day).map(&:hours).inject(:+)
     end
 
-    @daily_issues = @week_issue_matrix.select{|k,v| v[@current_day.to_s(:param_date)]} if @current_day
+    @daily_issues = @week_issues.select{|time_entry_hash| time_entry_hash[@current_day.to_s(:param_date)]} if @current_day
 
-    if @week_issue_matrix.empty?
-      @week_issue_matrix = {}
+    if @week_issues.empty?
       last_week_time_entries = TimeEntry.for_user(@user).spent_between(@week_start-7, @week_end-7).sort_by{|te| te.issue.project.name}.sort_by{|te| te.issue.subject }
       last_week_time_entries.each do |te|
-        @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"] ||= {:issue_id => te.issue_id,
-                                                                                                      :activity_id => te.activity_id,
-                                                                                                      :project_id => te.issue.project.id,
-                                                                                                      :project_name => te.issue.project.name,
-                                                                                                      :issue_text => te.issue.to_s,
-                                                                                                      :activity_name => te.activity.name
-                                                                                                     }
-        @week_issue_matrix["#{te.issue.project.name} - #{te.issue.subject} - #{te.activity.name}"][:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
+        time_entry_hash = { :id => te.id,
+                            :issue_id => te.issue_id,
+                            :activity_id => te.activity_id,
+                            :project_id => te.issue.project.id,
+                            :project_name => te.issue.project.name,
+                            :issue_text => te.issue.to_s,
+                            :activity_name => te.activity.name
+        }
+        time_entry_hash[:issue_class] ||= te.issue.closed? ? 'issue closed' : 'issue'
       end
-      @week_issue_matrix = @week_issue_matrix.sort
     end
-
+    @week_issues = @week_issues.group_by { |h| [h[:issue_id], h[:activity_id]] }.map do |k, group|
+      [k, group.group_by { |h| h[:spent_on] }]
+    end
   end
 
   def get_user
@@ -135,7 +145,7 @@ class HoursController < ApplicationController
 
   private
 
-  def hours_value(hours)
+  def parse_hours(hours)
     hours.tr(",", ".").to_f
   end
 end

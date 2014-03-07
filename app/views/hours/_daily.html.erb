@@ -10,7 +10,7 @@
 		<th><%= l(:field_hours) %></th>
 		<th><%= l(:field_comments) %></th>
 	</tr>
-	<% @daily_issues.each do |title, info_hash| %>
+	<% @daily_issues.each do |info_hash| %>
 	<tr>
 		<td>
 			<%= link_to info_hash[:project_name], project_path(info_hash[:project_id]) %> -
