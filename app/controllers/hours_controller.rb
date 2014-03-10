@@ -6,6 +6,19 @@ class HoursController < ApplicationController
   before_filter :get_issues
 
   def index
+    @issues_assigned_to_me = Issue.visible.open.
+      where(:assigned_to_id => ([User.current.id] + User.current.group_ids)).
+      limit(10).
+      includes(:status, :project, :tracker, :priority).
+      order("#{IssuePriority.table_name}.position DESC, #{Issue.table_name}.updated_on DESC")
+
+    my_time_entries_sorted_count = TimeEntry.where("user_id = ? AND issue_id IS NOT NULL AND updated_on > ?",
+                                                   User.current.id,
+                                                   1.month.ago).
+                                                   count(group: :issue_id).
+                                                   sort { |a, b| b.last <=> a.last }
+    issue_ids = my_time_entries_sorted_count.first(10).map(&:first)
+    @my_most_used_issues = Issue.where("id in (?)", issue_ids)
   end
 
   def next

@@ -12,7 +12,7 @@
 
 <% form_content = lambda do %>
   <p>
-    <%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :open_issues, :name, :id, :subject) %>
+    <%= select_tag 'issue_id', option_groups_from_collection_for_select(@loggable_projects, :open_issues, :name, :id, :subject), class: "chosen-select" %>
     <%= submit_tag l('redmine_hours.new_time_entry') %>
   </p>
 <% end %>
@@ -22,3 +22,12 @@
 <% else %>
   <%= form_tag({:controller => 'timelog', :action => 'new'}, :method => :get, &form_content) %>
 <% end %>
+
+<%= render_tabs [{:name => 'assigned_to_me',
+                  :partial => 'issues_tab',
+                  :label => :label_assigned_to_me_issues,
+                  :issues => @issues_assigned_to_me },
+                 {:name => 'my_most_used',
+                  :partial => 'issues_tab',
+                  :label => 'redmine_hours.my_most_used',
+                  :issues => @my_most_used_issues }] %>

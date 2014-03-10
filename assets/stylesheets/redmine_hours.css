@@ -1,0 +1,6 @@
+.rh-issue-table {
+  width: 700px;
+}
+.rh-issue-table td:last-child {
+  width: 90px;
+}
