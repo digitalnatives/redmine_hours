@@ -11,30 +11,48 @@
 						:day => d.to_s(:param_date) %></th>
 			<% end %>
 		</tr>
-		<% @week_issue_matrix.each do |title, info_hash| %>
-			<tr>
-				<td> <%= link_to info_hash[:project_name], project_path(info_hash[:project_id]) %> -
-					 <%= link_to info_hash[:issue_text], issue_time_entries_path(info_hash[:issue_id]), :class => info_hash[:issue_class] if info_hash[:issue_id] %>
-					 (<%= info_hash[:activity_name]%>)
-				</td>
-				<% (@week_start..@week_end).each do |d| %>
-          <% issue_key = info_hash[:issue_id] ? info_hash[:issue_id] : ("no_issue:" + "#{info_hash[:project_id]}") %>
-   				<td><%= text_field_tag "hours[#{d.to_s(:param_date)}][#{issue_key}][#{info_hash[:activity_id]}]",
-   															 info_hash[d.to_s(:param_date)].nil? || info_hash[d.to_s(:param_date)][:hours] == 0.0 ?
-   															 '' : info_hash[d.to_s(:param_date)][:hours],
-   															 :size => 1 %></td>
-				<% end %>
-				<td><%= link_to image_tag('delete.png'), {:controller => 'hours',
-														  :action => 'delete_row',
-														  :issue_id => info_hash[:issue_id],
-                              :project_id => info_hash[:project_id],
-														  :activity_id => info_hash[:activity_id],
-														  :week =>@week_start.to_s(:param_date)
-														 },
-                                             			  :confirm => l(:text_are_you_sure),
-                                             			  :method => :delete,
-                                             			  :title => l(:button_delete) %></td>
-			</tr>
+		<% @week_issues.each do |k, day_groups| %>
+      <% issue_id, activity_id = k %>
+      <% lines = day_groups.max_by { |_, entries| entries.size }.size %>
+      <% date, hashes = day_groups.first %>
+      <% info_hash = hashes.first %>
+      <% project_id = info_hash[:project_id] %>
+      <% 0.upto lines - 1 do |index| %>
+        <tr>
+          <td>
+            <% if index == 0 %>
+              <%= link_to info_hash[:project_name], project_path(info_hash[:project_id]) %> -
+            <%= link_to info_hash[:issue_text], issue_time_entries_path(info_hash[:issue_id]), :class => info_hash[:issue_class] if info_hash[:issue_id] %>
+            (<%= info_hash[:activity_name]%>)
+          <% end %>
+          </td>
+          <% (@week_start..@week_end).map { |d| d.to_s(:param_date)}.each do |d| %>
+            <td>
+              <% day_group = day_groups[d] || {} %>
+              <% info_hash = day_group[index] || {} %>
+              <% issue_key = issue_id || "no_issue:#{info_hash[:project_id]}" %>
+              <% if index == 0 || !info_hash.empty? %>
+                <%= text_field_tag "hours[#{d}][#{issue_key}][#{activity_id}][#{info_hash[:id] || -index}]",
+                                       info_hash[d].nil? || info_hash[d][:hours] == 0.0 ?
+                                       '' : info_hash[d][:hours],
+                                       :size => 1 %>
+              <% end %>
+            </td>
+          <% end %>
+          <% if index == 0 %>
+            <td><%= link_to image_tag('delete.png'), {:controller => 'hours',
+                                  :action => 'delete_row',
+                                  :issue_id => issue_id,
+                                  :project_id => project_id,
+                                  :activity_id => activity_id,
+                                  :week =>@week_start.to_s(:param_date)
+                                 },
+                                                        :confirm => l(:text_are_you_sure),
+                                                        :method => :delete,
+                                                        :title => l(:button_delete) %></td>
+          <% end %>
+        </tr>
+      <% end %>
 		<% end %>
     <tr>
       <td><hr /><strong>Total:</strong></td>
