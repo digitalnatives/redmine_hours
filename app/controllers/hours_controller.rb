@@ -6,9 +6,15 @@ class HoursController < ApplicationController
   before_filter :get_issues
 
   def index
-    @issues_assigned_to_me = Issue.visible.open.
-      where(:assigned_to_id => ([User.current.id] + User.current.group_ids)).
-      limit(10).
+    used_issues = @weekly_time_entries.map(&:issue_id)
+    issues_assigned_to_me = Issue.visible.open.
+      where(:assigned_to_id => ([User.current.id] + User.current.group_ids))
+    issues_assigned_to_me_not_used_recently = if used_issues.present?
+                                                 issues_assigned_to_me.where("#{Issue.table_name}.id NOT IN (?)", used_issues )
+                                               else
+                                                 issues_assigned_to_me
+                                               end
+    @issues_assigned_to_me_not_used_recently = issues_assigned_to_me_not_used_recently.limit(10).
       includes(:status, :project, :tracker, :priority).
       order("#{IssuePriority.table_name}.position DESC, #{Issue.table_name}.updated_on DESC")
 
@@ -97,10 +103,10 @@ class HoursController < ApplicationController
   def get_issues
     @loggable_projects = Project.all.select{ |pr| @user.allowed_to?(:log_time, pr)}
 
-    weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
+    @weekly_time_entries = TimeEntry.for_user(@user).spent_between(@week_start, @week_end)
 
     @week_issues = []
-    weekly_time_entries.each do |te|
+    @weekly_time_entries.each do |te|
       time_entry_hash = { :id => te.id,
                           :issue_id => te.issue_id,
                           :activity_id => te.activity_id,
