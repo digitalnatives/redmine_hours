@@ -26,7 +26,7 @@
 <%= render_tabs [{:name => 'assigned_to_me',
                   :partial => 'issues_tab',
                   :label => :label_assigned_to_me_issues,
-                  :issues => @issues_assigned_to_me },
+                  :issues => @issues_assigned_to_me_not_used_recently },
                  {:name => 'my_most_used',
                   :partial => 'issues_tab',
                   :label => 'redmine_hours.my_most_used',
