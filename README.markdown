@@ -1,3 +1,7 @@
+# Deprecation notice
+
+This repository is not maintained.
+
 # Redmine Hours Plugin
 
 Redmine Hours is a plugin to fill out your weekly timelog / timesheet easier.
